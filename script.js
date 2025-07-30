@@ -51,4 +51,5 @@ document.getElementById("answer").addEventListener("keydown", function(event) {
 document.addEventListener("DOMContentLoaded", function() {
     const today = new Date();
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById("today").textContent = today.toLocaleDateString(undefined, options);
+    document.getElementById("today").textContent = today.toLocaleDateString('en-US', options);
+});
