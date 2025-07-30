@@ -1,24 +1,14 @@
 let clues = [];
 let currentIndex = 0;
 
-fetch("http://127.0.0.1:5000/clues")
+fetch("https://cryptickles-backend.onrender.com/clues")
     .then(res => res.json())
     .then(data => {
         clues = data;
-        if (clues.length > 0) {
-            loadClue();
-        } else {
-            document.getElementById("clue").textContent = "No clues available";
-        }
+        loadClue();
     })
-    .catch(error => {
-        console.error("Error loading clues:", error);
-        document.getElementById("clue").textContent = "Error loading clues. Make sure the server is running.";
-    });
-
-function loadClue() {
-    if (clues.length === 0) return;
     
+function loadClue() {    
     document.getElementById("clue").textContent = clues[currentIndex].clue;
     document.getElementById("answer").value = "";
     document.getElementById("hint").textContent = "";
@@ -26,8 +16,6 @@ function loadClue() {
 }
 
 document.getElementById("submit").addEventListener("click", function() {
-    if (clues.length === 0) return;
-    
     const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
     const correctAnswer = clues[currentIndex].answer.toLowerCase();
     const result = document.getElementById("result");
@@ -35,11 +23,6 @@ document.getElementById("submit").addEventListener("click", function() {
     if (userAnswer === correctAnswer) {
         result.textContent = "Correct Answer!";
         result.style.color = "green";
-        // Move to next clue after a short delay
-        setTimeout(() => {
-            currentIndex = (currentIndex + 1) % clues.length;
-            loadClue();
-        }, 1500);
     } else {
         result.textContent = "Wrong Answer. Try Again!";
         result.style.color = "red";
@@ -47,9 +30,7 @@ document.getElementById("submit").addEventListener("click", function() {
 });
 
 // Hint button functionality
-document.getElementById("hintBtn").addEventListener("click", function() {
-    if (clues.length === 0) return;
-    
+document.getElementById("hintBtn").addEventListener("click", function() {    
     const hintElement = document.getElementById("hint");
     if (clues[currentIndex].hint) {
         hintElement.textContent = "Hint: " + clues[currentIndex].hint;
