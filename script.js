@@ -1,13 +1,39 @@
 let clues = [];
 let currentIndex = 0;
 
-fetch("https://cryptickles-backend.onrender.com/clues")
-    .then(res => res.json())
-    .then(data => {
-        clues = data;
-        loadClue();
-    })
-    
+// Helper to get today's date in YYYY-MM-DD format
+function getTodayDateString() {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+}
+
+// Fetch and load today's clue
+function loadTodayClue() {
+    const todayDate = getTodayDateString();
+    fetch(`https://cryptickles-backend.onrender.com/clue?date=${todayDate}`)
+        .then(res => {
+            if (!res.ok) throw new Error("missing");
+            return res.json();
+        })
+        .then(data => {
+            clues = [data];
+            currentIndex = 0;
+            loadClue();
+            // Show input/buttons in case they were hidden before
+            document.getElementById("answer").style.display = "";
+            document.getElementById("submit").style.display = "";
+            document.getElementById("hintBtn").style.display = "";
+        })
+        .catch(err => {
+            document.getElementById("clue").textContent = "Today's clue missing";
+            document.getElementById("answer").style.display = "none";
+            document.getElementById("submit").style.display = "none";
+            document.getElementById("hintBtn").style.display = "none";
+            document.getElementById("hint").textContent = "";
+            document.getElementById("result").textContent = "";
+        });
+}
+
 function loadClue() {    
     document.getElementById("clue").textContent = clues[currentIndex].clue;
     document.getElementById("answer").value = "";
@@ -52,4 +78,5 @@ document.addEventListener("DOMContentLoaded", function() {
     const today = new Date();
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById("today").textContent = today.toLocaleDateString('en-US', options);
+    loadTodayClue(); // <-- Load today's clue on page load
 });
